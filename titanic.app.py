@@ -1,70 +1,79 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 import seaborn as sns
+import matplotlib.pyplot as plt
 
-# Titel en beschrijving
-st.title("🚢 Titanic Data Analyse")
-st.markdown("""
-Welkom bij mijn **Titanic-analyse**!  
-Hier onderzoeken we wie er aan boord waren, hoeveel ze betaalden,  
-en welke factoren invloed hadden op hun overlevingskans.
-""")
 
-# Data inladen
-@st.cache_data
-def load_data():
-    return pd.read_csv("train.csv")
+pagina = st.sidebar.radio("Ga naar:", ["Introductie", "De 3e klasse", "De 1e klasse"])
+if pagina == 'Introductie':
+    st.title("Visual Analytics Dashboard") 
+    st.subheader("Een interactieve data-analyse presentatie") 
+    # Uitlegtekst 
+    st.markdown("""Welkom bij mijn Visual Analytics project!  
+                In deze applicatie laat ik zien hoe we data kunnen visualiseren en analyseren met behulp van **Streamlit**.
+                
+                **Wat je hier kunt verwachten:** 
+                - Een overzicht van de dataset  
+                - Interactieve grafieken  
+                - Inzichten uit de analyses  
+                
+                Gebruik de sidebar om te navigeren tussen verschillende onderdelen van de presentatie.
+                """)
 
-train = load_data()
+                # Eventueel een afbeelding of logo
+                # st.image("https://streamlit.io/images/brand/streamlit-logo-primary-colormark-darktext.png", width=200)
 
-st.header("1️⃣ Datasetverkenning")
-st.write("Bekijk een paar rijen uit de dataset:")
-st.dataframe(train.head())
+     # Footer of extra tekst
+    st.info("Scroll naar beneden of gebruik het menu om verder te gaan.")
 
-# Beschrijving
-st.write("Aantal rijen en kolommen:", train.shape)
+# pagina 2:
+elif pagina == 'De 3e klasse':
+    # Data inladen (zonder te tonen)
+    train = pd.read_csv('train.csv')
+    test = pd.read_csv('test.csv')
 
-# Missende waarden
-st.subheader("Ontbrekende waarden")
-missing = train.isna().sum()
-st.bar_chart(missing)
+    # Eenvoudige cleaning: verwijder rijen zonder Age
+    train = train.dropna(subset=["Age"])
+    test = test.dropna(subset=["Age"])
 
-# Verdeling van leeftijden
-st.header("2️⃣ Demografische verdeling")
-fig, ax = plt.subplots()
-ax.hist(train["Age"].dropna(), bins=20)
-ax.set_title("Verdeling van leeftijden")
-st.pyplot(fig)
+    # Eventueel extra preprocessing
+    train["status"] = np.where(train["Survived"] == 1, "Overleeft", "Overleden")
 
-# Geslachtverdeling
-st.subheader("Verdeling geslacht")
-st.bar_chart(train["Sex"].value_counts())
+    st.title('De 3e klasse')
+    st.subheader('Dit was de eerste versie van de titanic case')
 
-# Overleving per klasse
-st.header("3️⃣ Overleving per klasse")
-survival_class = train.groupby("Pclass")["Survived"].mean()
-st.bar_chart(survival_class)
+    tab1, tab2 = st.tabs(["Dataset", "Overleving Analyses"])
 
-# Ticketprijzen
-st.header("4️⃣ Analyse van Ticketprijzen")
-fig, ax = plt.subplots()
-ax.hist(train["Fare"], bins=30)
-ax.set_title("Verdeling van ticketprijzen")
-st.pyplot(fig)
+    # ---------------- Tab 1: Dataset ----------------
+    with tab1:
+        st.subheader("Voorbeeld van de dataset")
+        st.dataframe(train.head())
 
-# Log(Fare)
-fig, ax = plt.subplots()
-ax.hist(np.log1p(train["Fare"]), bins=30)
-ax.set_title("Log-verdeling van Fare")
-st.pyplot(fig)
+    # ---------------- Tab 2: Overleving Analyses ----------------
+    with tab2:
+        st.subheader("Overleving per geslacht")
+        sns.set_palette(["r","purple"])
+        fig1, ax1 = plt.subplots()
+        sns.barplot(data=train, x="Sex", y="Survived", hue="Sex", ax=ax1)
+        ax1.set_title("Overlevingskans per geslacht")
+        ax1.set_ylabel("Overlevingskans")
+        st.pyplot(fig1)
 
-# Leeftijdsgroepen
-st.header("5️⃣ Leeftijdsgroepen & kinderenanalyse")
-train["AgeGroup"] = pd.cut(train["Age"], bins=[0, 1, 15, 100], labels=["Infant", "Child", "Adult"])
+        st.subheader("Overleving per leeftijd")
+        sns.set_palette(["r", "black"])
+        fig2, ax2 = plt.subplots()
+        sns.histplot(data=train, x="Age", hue="status", alpha=0.6, multiple="dodge", ax=ax2)
+        ax2.set_title("Verdeling van leeftijden met overlevingsstatus")
+        ax2.set_xlabel("Leeftijd")
+        ax2.set_ylabel("Aantal")
+        st.pyplot(fig2)
 
-fare_by_group = train.groupby("AgeGroup")["Fare"].mean()
-st.bar_chart(fare_by_group)
-
-st.success("✅ Analyse afgerond!")
+        st.subheader("Overleving per klasse")
+        sns.set_palette(["lime", "r"])
+        fig3, ax3 = plt.subplots()
+        sns.countplot(data=train, x="Pclass", hue="status", ax=ax3)
+        ax3.set_title("Aantal passagiers per klasse met overlevingsstatus")
+        ax3.set_xlabel("Klasse")
+        ax3.set_ylabel("Aantal")
+        st.pyplot(fig3)
