@@ -82,7 +82,7 @@ elif pagina == 'De 3e klasse':
 elif pagina == 'De 1e klasse':
     tab3, tab4 = st.tabs(['Data verwerking', 'leeftijd en Gender'])
     with tab3:
-    st.title('text')
+        st.title('text')
     
     with tab4:
         fig4, ax = plt.subplots()
@@ -90,6 +90,7 @@ elif pagina == 'De 1e klasse':
         st.pyplot(fig4)
       
     
+
 
 
 
