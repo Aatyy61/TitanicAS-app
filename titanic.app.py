@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 
-pagina = st.sidebar.radio("Ga naar:", ["Introductie", "De 3e klasse", "De 1e klasse"])
+pagina = st.sidebar.radio("Ga naar:", ["Introductie", "De 3e klasse", 'De 2e klasse', "De 1e klasse"])
 if pagina == 'Introductie':
     st.title("Visual Analytics Dashboard") 
     st.subheader("Een interactieve data-analyse presentatie") 
@@ -77,3 +77,4 @@ elif pagina == 'De 3e klasse':
         ax3.set_xlabel("Klasse")
         ax3.set_ylabel("Aantal")
         st.pyplot(fig3)
+
