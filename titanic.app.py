@@ -144,7 +144,7 @@ elif pagina == 'De 2e klasse':
     'Q': 'Queenstown'
     })
     
-    tab3, tab4 = st.tabs(['Data verwerking', 'leeftijd en Gender'])
+    tab3, tab4, tab5 = st.tabs(['Data verwerking', 'Demografische verdeling', 'Invloedrijke factoren']) 
     with tab3:
         st.title('text')
     
@@ -152,8 +152,13 @@ elif pagina == 'De 2e klasse':
         fig4, ax = plt.subplots()
         sns.histplot(train["Age"], bins=30, kde=True, ax=ax)
         st.pyplot(fig4)
+
+    with tab5: 
+        st.title('Invloedrijke factoren')
+    
       
     
+
 
 
 
