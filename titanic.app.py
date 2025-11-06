@@ -80,6 +80,72 @@ elif pagina == 'De 3e klasse':
 
 # Pagina 3
 elif pagina == 'De 1e klasse':
+    # Pagina 3
+elif pagina == 'De 1e klasse':
+    train = pd.read_csv("train.csv")
+    test = pd.read_csv("test.csv")
+    train['Age'] = train['Age'].fillna(train.groupby('Sex')['Age'].transform('mean'))
+    # Kolom aangemaakt om te zien hoeveel pp betaald
+    train['Ticket_Count'] = train.groupby('Ticket')['Ticket'].transform('count')
+    train['Fare_per_person'] = train['Fare'] / train['Ticket_Count']
+    train['Fare'] = train['Fare_per_person']
+
+    # Kolom aangemaakt om te zien welke leeftijds groepen horen bij de PaassengerId
+    train['Age_Group'] = np.select(
+        [train['Age'] < 1, (train['Age'] >= 1) & (train['Age'] < 15), train['Age'] >= 15],
+        ['Infant', 'Child', 'Adult'],
+        default='Unknown')
+    # Tarieven verschillen per leeftijdsgroep
+    train['FareWeight'] = np.select(
+        [train['Age_Group'] == 'Infant', train['Age_Group'] == 'Child', train['Age_Group'] == 'Adult'],
+        [0.0, 0.5, 1.0]
+    )
+
+    # Berekening van het totale gewicht per ticket (gehele ticket)
+    train['TotalFareWeight'] = train.groupby('Ticket')['FareWeight'].transform('sum')
+
+    # Berekening van de waarde per gewichtseenheid (tarief per volwassene)
+    train['Fare_per_weight'] = train['Fare'] / train['TotalFareWeight']
+
+    # Berekening van de aangepaste fare (0.0 en 0.5 zodat ticket eerlijk verdeeld wordt)
+    train['AdjustedFare'] = train['Fare_per_weight'] * train['FareWeight']
+
+    # Oude kolom verwijderen (verkeerde data)
+    train.drop(columns=['Fare_per_person'], inplace=True, errors='ignore')
+
+    # Nieuwe kolom hernoemen naar juiste naam
+    train.rename(columns={'AdjustedFare': 'Fare_per_person'}, inplace=True)
+
+    train.drop(columns=['FareWeight', 'TotalFareWeight', 'Fare_per_weight'], inplace=True, errors='ignore')
+    # Tarieven verschillen per leeftijdsgroep
+    train['FareWeight'] = np.select(
+        [train['Age_Group'] == 'Infant', train['Age_Group'] == 'Child', train['Age_Group'] == 'Adult'],
+        [0.0, 0.5, 1.0]
+    )
+
+    # Berekening van het totale gewicht per ticket (gehele ticket)
+    train['TotalFareWeight'] = train.groupby('Ticket')['FareWeight'].transform('sum')
+
+    # Berekening van de waarde per gewichtseenheid (tarief per volwassene)
+    train['Fare_per_weight'] = train['Fare'] / train['TotalFareWeight']
+
+    # Berekening van de aangepaste fare (0.0 en 0.5 zodat ticket eerlijk verdeeld wordt)
+    train['AdjustedFare'] = train['Fare_per_weight'] * train['FareWeight']
+
+    # Oude kolom verwijderen (verkeerde data)
+    train.drop(columns=['Fare_per_person'], inplace=True, errors='ignore')
+
+    # Nieuwe kolom hernoemen naar juiste naam
+    train.rename(columns={'AdjustedFare': 'Fare_per_person'}, inplace=True)
+
+    train.drop(columns=['FareWeight', 'TotalFareWeight', 'Fare_per_weight'], inplace=True, errors='ignore')
+    train.drop(columns=['Cabin'])
+    train['Embarked'] = train['Embarked'].replace({
+    'S': 'Southampton',
+    'C': 'Cherbourg',
+    'Q': 'Queenstown'
+    })
+    
     tab3, tab4 = st.tabs(['Data verwerking', 'leeftijd en Gender'])
     with tab3:
         st.title('text')
@@ -90,6 +156,7 @@ elif pagina == 'De 1e klasse':
         st.pyplot(fig4)
       
     
+
 
 
 
