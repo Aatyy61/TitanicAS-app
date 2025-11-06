@@ -78,10 +78,8 @@ elif pagina == 'De 3e klasse':
         ax3.set_ylabel("Aantal")
         st.pyplot(fig3)
 
-# Pagina 3
-elif pagina == 'De 1e klasse':
-    # Pagina 3
-elif pagina == 'De 1e klasse':
+
+elif pagina == 'De 2e klasse':
     train = pd.read_csv("train.csv")
     test = pd.read_csv("test.csv")
     train['Age'] = train['Age'].fillna(train.groupby('Sex')['Age'].transform('mean'))
@@ -156,6 +154,7 @@ elif pagina == 'De 1e klasse':
         st.pyplot(fig4)
       
     
+
 
 
 
