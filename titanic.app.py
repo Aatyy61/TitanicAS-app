@@ -78,3 +78,16 @@ elif pagina == 'De 3e klasse':
         ax3.set_ylabel("Aantal")
         st.pyplot(fig3)
 
+# Pagina 3
+elif pagina = 'De 1e klasse':
+    tab3, tab4 = st.tabs(['Data verwerking', 'leeftijd en Gender'])
+    with tab3:
+
+    with tab4:
+        fig4, ax = plt.subplots()
+        sns.histplot(train["Age"], bins=30, kde=True, ax=ax)
+        st.pyplot(fig4)
+      
+    
+
+
