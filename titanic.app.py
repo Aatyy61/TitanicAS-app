@@ -285,7 +285,7 @@ elif pagina == 'Nieuwe verkenning':
         # --- Render in Streamlit ---
         st.pyplot(fig)
 
-elif pahina == 'Ons model':
+elif pagina == 'Ons model':
 
     # --- Titel pagina ---
     st.title("Logistic Regression Model - Titanic")
@@ -371,6 +371,7 @@ elif pahina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
