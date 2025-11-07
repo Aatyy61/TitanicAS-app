@@ -267,6 +267,18 @@ elif pagina == 'De 2e klasse':
         st.pyplot(g.fig)
 
     with tab5:
+        # Maak label kolom aan
+        if 'Survived_label' not in train.columns:
+            train['Survived_label'] = train['Survived'].map({0:'Niet overleefd',1:'Overleefd'})
+        
+        # Filter rows waar kolommen bestaan en geen NaN
+        cols_needed = ['Embarked','Pclass','Survived_label']
+        for col in cols_needed:
+            if col not in train.columns:
+                st.error(f"Kolom '{col}' bestaat niet in de dataset!")
+                st.stop()
+        
+        train_plot = train.dropna(subset=cols_needed)
         st.title('Invloedrijke factoren')
     
         # --- Barplot Overleving per Age_Group en Pclass ---
@@ -331,6 +343,7 @@ elif pagina == 'De 2e klasse':
         
       
     
+
 
 
 
