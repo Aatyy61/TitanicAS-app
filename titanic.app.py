@@ -224,6 +224,33 @@ elif pagina == 'De 2e klasse':
         aspect=0.9
         )
 
+    # laatste plot
+    # Plot maken
+    fig, ax = plt.subplots(figsize=(7,5))
+    sns.countplot(
+        data=train,
+        x='FamilySize',
+        palette=["#08675B", "#FF8345"],
+        ax=ax
+    )
+
+    # Titel en labels
+    ax.set_title('Verdeling van familiegrootte')
+    ax.set_xlabel('Aantal familieleden aan boord')
+    ax.set_ylabel('Aantal passagiers')
+
+    # Voeg labels toe boven de balken
+    for container in ax.containers:
+        ax.bar_label(container, fmt='%d', label_type='edge', padding=3, fontsize=10)
+
+    # Rasterlijnen voor duidelijkheid
+    ax.grid(axis='y', linestyle='--', alpha=0.5)
+
+    plt.tight_layout()
+
+    # Toon plot in Streamlit
+    st.pyplot(fig)
+
     with tab5:
         st.title('Invloedrijke factoren')
 
@@ -269,5 +296,17 @@ elif pagina == 'De 2e klasse':
         
         # --- Render in Streamlit ---
         st.pyplot(g.fig)
+
+        # Correlatie matrix
+        st.title("Correlatie matrix van numerieke waarden")
+        
+        # --- Heatmap plotten ---
+        fig, ax = plt.subplots(figsize=(10,8))
+        sns.heatmap(train_num.corr(), annot=True, cmap='coolwarm', ax=ax)
+        ax.set_title("Correlatie matrix van numerieke waarden")
+        
+        # --- Render in Streamlit ---
+        st.pyplot(fig)
     
+
 
