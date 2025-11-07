@@ -244,26 +244,30 @@ elif pagina == 'De 2e klasse':
         ax1.legend(title='Klasse', loc='upper right')
         plt.tight_layout()
         st.pyplot(fig1)
-    
-      # Maak catplot
+        
+        st.title("Overlevingsanalyse per haven en klasse")
         g = sns.catplot(
-            x='Embarked',
-            hue='Survived',  # gebruik de originele kolom
-            kind='count',
-            col='Pclass',
-            data=train,
-            palette=["#08675B", "#FF8345"],
-            height=5,
-            aspect=0.9
+        x='Embarked',
+        hue='Survived',      # originele kolom 0/1
+        kind='count',
+        col='Pclass',
+        data=train,          # geen aparte train_plot
+        palette=["#08675B", "#FF8345"],
+        height=5,
+        aspect=0.9
         )
-
-        # Pas legend labels aan
+        
+        # --- Pas legend labels aan (zonder extra kolom) ---
         for ax in g.axes.flat:
             handles, labels = ax.get_legend_handles_labels()
             ax.legend(handles=handles, labels=["Niet overleefd","Overleefd"], title="Overleving")
-
-        # Layout en titel
+        
+        # --- Titel en labels ---
         g.fig.subplots_adjust(top=0.85)
         g.fig.suptitle('Aantal overlevenden per haven van inscheping en klasse', fontsize=16)
         g.set_axis_labels("Haven van inscheping", "Aantal passagiers")
+        
+        # --- Render in Streamlit ---
+        st.pyplot(g.fig)
+    
 
