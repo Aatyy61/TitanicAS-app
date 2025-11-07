@@ -155,9 +155,6 @@ elif pagina == 'De 2e klasse':
         Hieronder bekijken we de verdeling van leeftijden op de Titanic, uitgesplitst naar **geslacht** en **overlevingsstatus**.
         """)
         
-        # --- DATA INLADEN ---
-        train = pd.read_csv("train.csv")
-        
         # --- PLOT 1: Leeftijdsverdeling per geslacht ---
         st.markdown("### Leeftijdsverdeling per geslacht")
         
@@ -236,6 +233,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
