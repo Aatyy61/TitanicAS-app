@@ -279,9 +279,17 @@ elif pagina == 'De 2e klasse':
 
     with tab5: 
         st.title('Invloedrijke factoren')
+        
+        fig, ax = plt.subplots(figsize=(10,8))
+        sns.heatmap(train_num.corr(), annot=True, cmap='coolwarm', ax=ax)
+        ax.set_title("Correlatie matrix van numerieke waarden")
+        
+        # Streamlit render
+        st.pyplot(fig)
     
       
     
+
 
 
 
