@@ -206,12 +206,37 @@ elif pagina == 'De 2e klasse':
         ax2.grid(axis='y', linestyle='--', alpha=0.7)
         st.pyplot(fig2)
 
+        st.markdown("### Overlevingspercentage per leeftijdsgroep en klasse")
+
+        # Plot maken
+        fig, ax = plt.subplots(figsize=(8,5))
+        sns.barplot(
+            data=train,
+            x='Age_Group',
+            y='Survived',
+            hue='Pclass',
+            palette=["#08675B", "#E3DF00FD", "#FF8345"],
+            ax=ax
+        )
+        
+        # Labels en layout
+        ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
+        ax.set_xlabel('Leeftijdsgroep')
+        ax.set_ylabel('Overlevingskans')
+        ax.grid(axis='y', alpha=0.3, linestyle='--')
+        ax.legend(title='Klasse', loc='upper right')
+        plt.tight_layout()
+        
+        # Streamlit render
+        st.pyplot(fig)
+
 
     with tab5: 
         st.title('Invloedrijke factoren')
     
       
     
+
 
 
 
