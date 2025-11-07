@@ -150,7 +150,7 @@ elif pagina == 'De 2e klasse':
     
     with tab4:
         fig4, ax4 = plt.subplots()
-        sns.histplot(train["Age"], bins=30, kde=True,["#FF8345", "#08675B88"], ax=ax4)
+        sns.histplot(train["Age"], bins=30, kde=True, color="#FF8345", ax=ax4)
         st.pyplot(fig4)
 
     with tab5: 
@@ -158,6 +158,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
