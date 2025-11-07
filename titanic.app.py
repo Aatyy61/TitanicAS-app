@@ -276,6 +276,19 @@ elif pagina == 'De 2e klasse':
         ax.legend(title='Klasse', loc='upper right')
         plt.tight_layout()
         
+        st.markdown("### Overlevingspercentage per leeftijdsgroep en klasse")
+
+        # Plot maken
+        fig, ax = plt.subplots(figsize=(8,5))
+        sns.barplot(
+            data=train,
+            x='Age_Group',
+            y='Survived',
+            hue='Pclass',
+            palette=["#08675B", "#E3DF00FD", "#FF8345"],
+            ax=ax
+        )
+        
         # Streamlit render
         st.pyplot(fig)
         train['Survived_label'] = train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'})
@@ -312,6 +325,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
