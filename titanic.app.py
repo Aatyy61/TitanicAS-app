@@ -265,86 +265,73 @@ elif pagina == 'De 2e klasse':
         
         # Render in Streamlit
         st.pyplot(g.fig)
-    with tab5:
-        # Labels en layout
-        ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
-        ax.set_xlabel('Leeftijdsgroep')
-        ax.set_ylabel('Overlevingskans')
-        ax.grid(axis='y', alpha=0.3, linestyle='--')
-        ax.legend(title='Klasse', loc='upper right')
-        plt.tight_layout()
-        
-        st.markdown("### Overlevingspercentage per leeftijdsgroep en klasse")
 
-        # Plot maken
-        fig, ax = plt.subplots(figsize=(8,5))
+    with tab5:
+        st.title('Invloedrijke factoren')
+    
+        # --- Barplot Overleving per Age_Group en Pclass ---
+        fig1, ax1 = plt.subplots(figsize=(8,5))
         sns.barplot(
             data=train,
             x='Age_Group',
             y='Survived',
             hue='Pclass',
-            palette=["#08675B", "#E3DF00FD", "#FF8345"],
-            ax=ax
+            palette=["#08675B","#E3DF00","#FF8345"],
+            ax=ax1
         )
-        
-        # Streamlit render
-        st.pyplot(fig)
-        train['Survived_label'] = train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'})
-
-        # Catplot maken
+        ax1.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
+        ax1.set_xlabel('Leeftijdsgroep')
+        ax1.set_ylabel('Overlevingskans')
+        ax1.grid(axis='y', alpha=0.3, linestyle='--')
+        ax1.legend(title='Klasse', loc='upper right')
+        plt.tight_layout()
+        st.pyplot(fig1)
+    
+        # --- Catplot per Embarked en Pclass ---
+        train['Survived_label'] = train['Survived'].map({0:'Niet overleefd',1:'Overleefd'})
+        train_plot = train.dropna(subset=['Embarked','Pclass','Survived_label'])
         g = sns.catplot(
             x='Embarked',
-            hue='Survived_label',   # gebruik de gelabelde kolom
+            hue='Survived_label',
             kind='count',
             col='Pclass',
-            data=train,
-            palette=["#08675B", "#FF8345"]
+            data=train_plot,
+            palette=["#08675B","#FF8345"],
+            height=5,
+            aspect=0.9
         )
-        
-        # Titels en layout
         g.fig.subplots_adjust(top=0.85)
-        g.fig.suptitle('Aantal overlevenden per Embarked en Pclass', fontsize=16)
+        g.fig.suptitle('Aantal overlevenden per haven van inscheping en klasse', fontsize=16)
         g.set_axis_labels("Haven van inscheping", "Aantal passagiers")
         g._legend.set_title("Overleving")
-        
-        # Streamlit renderen
         st.pyplot(g.fig)
-        
-        # plot corr
-        train_num = train[['Age', 'SibSp', 'Parch', 'Fare_per_person']]
-        st.title('Invloedrijke factoren')
-        
-        fig, ax = plt.subplots(figsize=(10,8))
-        sns.heatmap(train_num.corr(), annot=True, cmap='coolwarm', ax=ax)
-        ax.set_title("Correlatie matrix van numerieke waarden")
-        
-        # Streamlit render
-        st.pyplot(fig)
-        
-        
-        # plot nieuwe
-        
     
-        # Plot maken
-        fig, ax = plt.subplots()
+        # --- Heatmap correlatie numerieke waarden ---
+        train_num = train[['Age','SibSp','Parch','Fare_per_person']]
+        fig2, ax2 = plt.subplots(figsize=(10,8))
+        sns.heatmap(train_num.corr(), annot=True, cmap='coolwarm', ax=ax2)
+        ax2.set_title("Correlatie matrix van numerieke waarden")
+        st.pyplot(fig2)
+    
+        # --- Scatterplot Age vs Fare ---
+        fig3, ax3 = plt.subplots(figsize=(8,5))
         sns.scatterplot(
             x='Age',
             y='Fare',
+            hue='Survived_label',
             data=train,
-            hue=train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'}),
-            palette=["#08675B88", "#FF8345"],
-            ax=ax
+            palette=["#08675B","#FF8345"],
+            ax=ax3
         )
-        ax.set_xlabel('Leeftijd')
-        ax.set_ylabel('Ticketprijs (£)')
-        ax.set_title('Relatie tussen leeftijd en ticketprijs')
-        ax.grid(alpha=0.5, linestyle='--')
+        ax3.set_xlabel('Leeftijd')
+        ax3.set_ylabel('Ticketprijs (£)')
+        ax3.set_title('Relatie tussen leeftijd en ticketprijs')
+        ax3.grid(alpha=0.5, linestyle='--')
+        st.pyplot(fig3)
         
-        st.pyplot(fig)
-
-    
       
     
+
 
 
 
