@@ -244,6 +244,35 @@ elif pagina == 'De 2e klasse':
         # --- Plot tonen in Streamlit ---
         st.pyplot(g)
 
+         # Plot maken
+        fig, ax = plt.subplots(figsize=(7,5))
+        sns.countplot(
+            data=train,
+            x='Age_Group',
+            hue='Travel_Alone',
+            palette=["#FF8345", "#08675B"],
+            ax=ax
+        )
+    
+        # Titel en labels
+        ax.set_title('Alleenreizend vs samenreizend per leeftijdsgroep')
+        ax.set_xlabel('Leeftijdsgroep')
+        ax.set_ylabel('Aantal passagiers')
+    
+        # ✅ Horizontale hulplijnen
+        ax.grid(axis='y', alpha=0.3, linestyle='--')
+    
+        # ✅ Legenda aanpassen
+        handles, labels = ax.get_legend_handles_labels()
+        new_labels = ['Samen', 'Alleen']
+        ax.legend(handles, new_labels, title='Reisstatus')
+    
+        # ✅ Aantallen boven de balken
+        for container in ax.containers:
+            ax.bar_label(container, fmt='%d', label_type='edge', padding=2)
+    
+        plt.tight_layout()
+
     with tab5:
         # Labels en layout
         ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
@@ -299,8 +328,9 @@ elif pagina == 'De 2e klasse':
         
         # Streamlit render
         st.pyplot(fig)
+        
+        
         # plot nieuwe
-        st.header("Relatie tussen leeftijd en ticketprijs (3e klasse)")
         
     
         # Plot maken
@@ -315,7 +345,7 @@ elif pagina == 'De 2e klasse':
         )
         ax.set_xlabel('Leeftijd')
         ax.set_ylabel('Ticketprijs (£)')
-        ax.set_title('Relatie tussen leeftijd en ticketprijs (3e klasse)')
+        ax.set_title('Relatie tussen leeftijd en ticketprijs')
         ax.grid(alpha=0.5, linestyle='--')
         
         st.pyplot(fig)
@@ -323,6 +353,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
