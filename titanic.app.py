@@ -278,6 +278,28 @@ elif pagina == 'De 2e klasse':
         st.pyplot(g)
 
     with tab5: 
+        train['Survived_label'] = train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'})
+
+        # Catplot maken
+        g = sns.catplot(
+            x='Embarked',
+            hue='Survived_label',   # gebruik de gelabelde kolom
+            kind='count',
+            col='Pclass',
+            data=train,
+            palette=["#08675B", "#FF8345"]
+        )
+        
+        # Titels en layout
+        g.fig.subplots_adjust(top=0.85)
+        g.fig.suptitle('Aantal overlevenden per Embarked en Pclass', fontsize=16)
+        g.set_axis_labels("Haven van inscheping", "Aantal passagiers")
+        g._legend.set_title("Overleving")
+        
+        # Streamlit renderen
+        st.pyplot(g.fig)
+        
+        # plot 2
         train_num = train[['Age', 'SibSp', 'Parch', 'Fare_per_person']]
         st.title('Invloedrijke factoren')
         
@@ -290,6 +312,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
