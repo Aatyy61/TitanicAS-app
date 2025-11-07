@@ -247,8 +247,6 @@ elif pagina == 'De 2e klasse':
     with tab5:
          st.header("Relatie tussen leeftijd en ticketprijs (3e klasse)")
         
-        # Filter enkel passagiers van de 3e klasse
-        derde_klasse = train[train["Pclass"] == 3]
     
         # Plot maken
         fig, ax = plt.subplots()
@@ -324,6 +322,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
