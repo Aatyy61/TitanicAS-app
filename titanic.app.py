@@ -11,23 +11,19 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
 
 pagina = st.sidebar.radio("Ga naar:", ["Introductie", "Oude case", 'Nieuwe verkenning', "Ons model"])
 if pagina == 'Introductie':
-    st.title("Visual Analytics Dashboard") 
-    st.subheader("Een interactieve data-analyse presentatie") 
-    # Uitlegtekst 
-    st.markdown("""Welkom bij mijn Visual Analytics project!  
-                In deze applicatie laat ik zien hoe we data kunnen visualiseren en analyseren met behulp van **Streamlit**.
-                
-                **Wat je hier kunt verwachten:** 
-                - Een overzicht van de dataset  
-                - Interactieve grafieken  
-                - Inzichten uit de analyses  
-                
-                Gebruik de sidebar om te navigeren tussen verschillende onderdelen van de presentatie.
-                """)
-
-                # Eventueel een afbeelding of logo
-                # st.image("https://streamlit.io/images/brand/streamlit-logo-primary-colormark-darktext.png", width=200)
-
+    st.header("Analyse van de Titanic-dataset")
+    
+    st.markdown("""
+    - We hebben opnieuw de Titanic-dataset geanalyseerd en de dataframe aangepast.  
+    - Eerst is de dataset opgeschoond door te kijken naar verwarrende waarden, uitschieters, missende waarden en dubbele rijen.  
+    - De missende leeftijden (177 waarden) zijn ingevuld met de gemiddelde leeftijd per geslacht.  
+    - Dit is gedaan omdat de rijen met missende leeftijden waardevolle informatie bevatten die we niet wilden verwijderen.  
+    - Er zijn nieuwe kolommen aangemaakt die aangeven tot welke leeftijdsgroep passagiers behoren.  
+    - Uit historische bronnen blijkt dat kinderen korting kregen en pasgeborenen gratis mochten meereizen.  
+    - Deze informatie is in de code verwerkt.  
+    - Daarnaast is de totale ticketprijs verdeeld over passagiers met hetzelfde ticketnummer, wanneer zij samen reisden.  
+    - Door deze aanpassingen konden we accuratere resultaten verkrijgen in onze analyse.
+    """)
      # Footer of extra tekst
     st.info("Scroll naar beneden of gebruik het menu om verder te gaan.")
 
@@ -346,22 +342,6 @@ elif pagina == 'Ons model':
     st.subheader("Accuracy op validation set")
     st.success(f"{acc:.3f}")
     
-    # Confusion matrix
-    st.subheader("Confusion Matrix")
-    cm = confusion_matrix(y_val, y_pred)
-    fig_cm, ax_cm = plt.subplots(figsize=(6,5))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax_cm)
-    ax_cm.set_xlabel("Predicted")
-    ax_cm.set_ylabel("Actual")
-    ax_cm.set_title("Confusion Matrix")
-    st.pyplot(fig_cm)
-    
-    # Classification report
-    st.subheader("Classification Report")
-    report = classification_report(y_val, y_pred, output_dict=True)
-    report_df = pd.DataFrame(report).transpose()
-    st.dataframe(report_df)
-    
     # Feature importance / coefficients
     st.subheader("Feature importance (coefficients)")
     coef_df = pd.DataFrame({
@@ -393,6 +373,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
