@@ -143,6 +143,7 @@ elif pagina == 'Nieuwe verkenning':
         - Daarnaast is de totale ticketprijs verdeeld over passagiers met hetzelfde ticketnummer, wanneer zij samen reisden.  
         - Door deze aanpassingen konden we accuratere resultaten verkrijgen in onze analyse.
         """)
+        train.head()
     
             
     with tab4:
@@ -370,6 +371,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
