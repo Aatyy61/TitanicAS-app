@@ -237,7 +237,7 @@ elif pagina == 'De 2e klasse':
         sns.scatterplot(
             x='Age',
             y='Fare',
-            data=derde_klasse,
+            data=train,
             hue='Survived',
             palette=["#08675B88", "#FF8345"],
             ax=ax
@@ -254,6 +254,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
