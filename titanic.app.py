@@ -149,9 +149,15 @@ elif pagina == 'De 2e klasse':
         st.title('text')
     
     with tab4:
+        # --- TITEL & INLEIDING ---
         st.title("Demografische verdeling van Titanic-passagiers")
+        st.markdown("""
+        Hieronder bekijken we de verdeling van leeftijden op de Titanic, uitgesplitst naar **geslacht** en **overlevingsstatus**.
+        """)
         
-        # --- Histogram per geslacht ---
+        # --- PLOT 1: Leeftijdsverdeling per geslacht ---
+        st.markdown("### Leeftijdsverdeling per geslacht")
+        
         fig1, ax1 = plt.subplots(figsize=(8,5))
         sns.histplot(
             data=train,
@@ -159,10 +165,9 @@ elif pagina == 'De 2e klasse':
             hue='Sex',
             kde=True,
             bins=25,
-            alpha=0.6,
-            multiple='layer',
-            palette=["#FF8345", "#08675B"],
-            edgecolor='white',
+            alpha=0.8,
+            multiple='dodge',
+            palette=["#FF8345", "#08675B88"],
             ax=ax1
         )
         ax1.set_title('Leeftijdsverdeling per geslacht')
@@ -170,67 +175,98 @@ elif pagina == 'De 2e klasse':
         ax1.set_ylabel("Aantal passagiers")
         ax1.grid(axis='y', linestyle='--', alpha=0.7)
         st.pyplot(fig1)
-    
-        # --- Histogram per overleving ---
-        train['Survived_label'] = train['Survived'].map({0:'Niet overleefd', 1:'Overleefd'})
+        
+        # Eventueel wat uitleg onder de plot
+        st.caption("""
+        Vrouwen lijken gemiddeld iets jonger in de dataset, en de verdeling is breder bij mannen.
+        """)
+        
+        # --- PLOT 2: Leeftijdsverdeling per overleving ---
+        st.markdown("### Leeftijdsverdeling per overleving")
+        
         fig2, ax2 = plt.subplots(figsize=(8,5))
         sns.histplot(
             data=train,
             x='Age',
-            hue='Survived_label',
+            hue='Survived',
             kde=True,
             bins=25,
-            alpha=0.6,
-            multiple='layer',
-            palette=["#08675B", "#FF8345"],
-            edgecolor='white',
+            alpha=0.8,
+            multiple='dodge',
+            palette=["#08675B88", "#FF8345"],  # kleuren omgedraaid voor contrast
             ax=ax2
         )
         ax2.set_title('Leeftijdsverdeling per overleving')
         ax2.set_xlabel("Leeftijd")
         ax2.set_ylabel("Aantal passagiers")
+        ax2.legend(title="Overleefd", labels=["Nee", "Ja"])
         ax2.grid(axis='y', linestyle='--', alpha=0.7)
         st.pyplot(fig2)
-    
-        # --- Barplot overleving per leeftijdsgroep en klasse ---
-           grouped = train.groupby(['Age_Group','Pclass'], as_index=False)['Survived'].mean()
-        grouped['Survived'] *= 100
-        fig3, ax3 = plt.subplots(figsize=(8,5))
+
+        st.markdown("### Overlevingspercentage per leeftijdsgroep en klasse")
+
+        # Plot maken
+        fig, ax = plt.subplots(figsize=(8,5))
         sns.barplot(
             data=train,
-            data=grouped,
             x='Age_Group',
             y='Survived',
             hue='Pclass',
             palette=["#08675B", "#E3DF00FD", "#FF8345"],
             ax=ax
-            palette=["#08675B","#E3DF00","#FF8345"],
-            ax=ax3
         )
-        ax3.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
-        ax3.set_xlabel('Leeftijdsgroep')
-        ax3.set_ylabel('Overlevingskans (%)')
-        ax3.grid(axis='y', linestyle='--', alpha=0.3)
-        st.pyplot(fig3)
-
-        # --- Catplot per haven van inscheping ---
-        train_plot = train.dropna(subset=['Embarked','Pclass','Survived_label'])
+    
+        g = sns.catplot(
+        x='Embarked',
+        hue='Survived',
+        col='Pclass',
+        kind='count',
+        data=train,
+        palette=["#08675B88", "#FF8345"],  # jouw kleuren
+        hue_order=[1, 0],                  # zodat oranje (Nee) bovenop ligt
+        height=5,
+        aspect=0.9
+        )
+    
+        # Titels en labels
+        g.fig.suptitle('Aantal passagiers per haven, klasse en overleving', fontsize=14, y=1.03)
+        g.set_axis_labels("Inschepingshaven", "Aantal passagiers")
+    
+        # Voeg getallen toe op de balken
+        for ax in g.axes.flat:
+            for container in ax.containers:
+                ax.bar_label(container, fmt='%d', label_type='edge', fontsize=9, color='black', padding=2)
+    
+        # Rasters toevoegen voor leesbaarheid
+        for ax in g.axes.flat:
+            ax.grid(axis='y', linestyle='--', alpha=0.6)
+    
+        # --- Plot tonen in Streamlit ---
+        st.pyplot(g)
+                
+       train['Survived_label'] = train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'})
+        
+        # Filter NaN-waarden in de kolommen die je plot
+        train_plot = train.dropna(subset=['Embarked', 'Pclass', 'Survived_label'])
+        
+        # Catplot (countplot per Pclass)
         g = sns.catplot(
             x='Embarked',
             hue='Survived_label',
             kind='count',
             col='Pclass',
             data=train_plot,
-            palette=["#08675B","#FF8345"],
-            height=5,
-            aspect=0.9
+            palette=["#08675B", "#FF8345"]
         )
+        
+        # Titels en labels
         g.fig.subplots_adjust(top=0.85)
         g.fig.suptitle('Aantal overlevenden per haven van inscheping en klasse', fontsize=16)
         g.set_axis_labels("Haven van inscheping", "Aantal passagiers")
         g._legend.set_title("Overleving")
+        
+        # Render in Streamlit
         st.pyplot(g.fig)
-
     with tab5:
         # Labels en layout
         ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
@@ -311,6 +347,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
