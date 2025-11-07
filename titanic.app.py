@@ -315,8 +315,8 @@ elif pagina == 'Ons model':
         if col not in test.columns:
             test[col] = 0
 
-# Sorteer kolommen zodat de volgorde exact overeenkomt
-X_test = test[features]
+    # Sorteer kolommen zodat de volgorde exact overeenkomt
+    X_test = test[features]
     # --- Streamlit UI ---
     st.title("Logistic Regression Model - Titanic")
     st.markdown("""
@@ -373,6 +373,7 @@ X_test = test[features]
         mime="text/csv"
     )
     
+
 
 
 
