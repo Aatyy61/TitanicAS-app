@@ -216,16 +216,6 @@ elif pagina == 'De 2e klasse':
             ax=ax
         )
         
-        # Labels en layout
-        ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
-        ax.set_xlabel('Leeftijdsgroep')
-        ax.set_ylabel('Overlevingskans')
-        ax.grid(axis='y', alpha=0.3, linestyle='--')
-        ax.legend(title='Klasse', loc='upper right')
-        plt.tight_layout()
-        
-        # Streamlit render
-        st.pyplot(fig)
 
         st.header("Relatie tussen leeftijd en ticketprijs (3e klasse)")
         
@@ -278,6 +268,16 @@ elif pagina == 'De 2e klasse':
         st.pyplot(g)
 
     with tab5: 
+         # Labels en layout
+        ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
+        ax.set_xlabel('Leeftijdsgroep')
+        ax.set_ylabel('Overlevingskans')
+        ax.grid(axis='y', alpha=0.3, linestyle='--')
+        ax.legend(title='Klasse', loc='upper right')
+        plt.tight_layout()
+        
+        # Streamlit render
+        st.pyplot(fig)
         train['Survived_label'] = train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'})
 
         # Catplot maken
@@ -312,6 +312,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
