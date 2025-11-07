@@ -245,26 +245,6 @@ elif pagina == 'De 2e klasse':
         st.pyplot(g)
 
     with tab5:
-         st.header("Relatie tussen leeftijd en ticketprijs (3e klasse)")
-        
-    
-        # Plot maken
-        fig, ax = plt.subplots()
-        sns.scatterplot(
-            x='Age',
-            y='Fare',
-            data=train,
-            hue=train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'}),
-            palette=["#08675B88", "#FF8345"],
-            ax=ax
-        )
-        ax.set_xlabel('Leeftijd')
-        ax.set_ylabel('Ticketprijs (£)')
-        ax.set_title('Relatie tussen leeftijd en ticketprijs (3e klasse)')
-        ax.grid(alpha=0.5, linestyle='--')
-        
-        st.pyplot(fig)
-
         # Labels en layout
         ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
         ax.set_xlabel('Leeftijdsgroep')
@@ -319,9 +299,31 @@ elif pagina == 'De 2e klasse':
         
         # Streamlit render
         st.pyplot(fig)
+        # plot nieuwe
+        st.header("Relatie tussen leeftijd en ticketprijs (3e klasse)")
+        
+    
+        # Plot maken
+        fig, ax = plt.subplots()
+        sns.scatterplot(
+            x='Age',
+            y='Fare',
+            data=train,
+            hue=train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'}),
+            palette=["#08675B88", "#FF8345"],
+            ax=ax
+        )
+        ax.set_xlabel('Leeftijd')
+        ax.set_ylabel('Ticketprijs (£)')
+        ax.set_title('Relatie tussen leeftijd en ticketprijs (3e klasse)')
+        ax.grid(alpha=0.5, linestyle='--')
+        
+        st.pyplot(fig)
+
     
       
     
+
 
 
 
