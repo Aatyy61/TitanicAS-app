@@ -267,8 +267,8 @@ elif pagina == 'De 2e klasse':
         # --- Plot tonen in Streamlit ---
         st.pyplot(g)
 
-    with tab5: 
-         # Labels en layout
+    with tab5:
+        # Labels en layout
         ax.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
         ax.set_xlabel('Leeftijdsgroep')
         ax.set_ylabel('Overlevingskans')
@@ -299,7 +299,7 @@ elif pagina == 'De 2e klasse':
         # Streamlit renderen
         st.pyplot(g.fig)
         
-        # plot 2
+        # plot corr
         train_num = train[['Age', 'SibSp', 'Parch', 'Fare_per_person']]
         st.title('Invloedrijke factoren')
         
@@ -312,6 +312,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
