@@ -287,6 +287,43 @@ elif pagina == 'Nieuwe verkenning':
 
 elif pagina == 'Ons model':
 
+    train['Age'] = train['Age'].fillna(train.groupby('Sex')['Age'].transform('mean'))
+    test['Age'] = train['Age'].fillna(train.groupby('Sex')['Age'].transform('mean'))
+    # Filter: alleen kinderen in 3e klas
+    children_third_class = train[(train['Pclass'] == 3) & (train['Age_Group'] == 'Child')]
+    
+    # Berekeningen
+    total_fare = children_third_class['Fare_per_person'].sum()
+    average_fare = children_third_class['Fare_per_person'].mean()
+    count_children = len(children_third_class)
+    
+    children_third_class = train[(train['Age_Group'] == 'Child') & (train['Pclass'] == 3)]
+    children_third_class.head().round(2)
+    
+    
+    train["Travel_Alone"] = np.where((train["SibSp"] +train["Parch"]) == 0, "Alleen", "Samen")
+    
+    train['Embarked'] = train['Embarked'].replace({
+        'S': 'Southampton',
+        'C': 'Cherbourg',
+        'Q': 'Queenstown'
+    })
+    
+    # === 1. Drop overbodige kolommen ===
+    train = train.drop(columns=['Cabin', 'Name', 'Ticket'])
+    test = test.drop(columns=['Cabin', 'Name', 'Ticket'])
+    
+    # === 2. Maak 'Sex' numeriek ===
+    train["Sex"] = train["Sex"].map({"male": 0, "female": 1})
+    test["Sex"] = test["Sex"].map({"male": 0, "female": 1})
+    
+    # === 3. Nieuwe feature: reist alleen? ===
+    train["Travel_Alone"] = np.where((train["SibSp"] + train["Parch"]) == 0, 1, 0)
+    test["Travel_Alone"] = np.where((test["SibSp"] + test["Parch"]) == 0, 1, 0)
+    
+    # === 4. One-hot encoding voor Embarked ===
+    train = pd.get_dummies(train, columns=["Embarked"], drop_first=False)
+    test = pd.get_dummies(test, columns=["Embarked"], drop_first=False)
     # --- Titel pagina ---
     st.title("Logistic Regression Model - Titanic")
     st.markdown("""
@@ -371,6 +408,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
