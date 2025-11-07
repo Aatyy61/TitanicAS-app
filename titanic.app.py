@@ -149,15 +149,51 @@ elif pagina == 'De 2e klasse':
         st.title('text')
     
     with tab4:
-        fig4, ax4 = plt.subplots()
-        sns.histplot(train["Age"], bins=30, kde=True, color="#FF8345", ax=ax4)
-        st.pyplot(fig4)
+        col1, col2 = st.columns(2)
+
+        # Linker plot
+        with col1:
+            fig1, ax1 = plt.subplots(figsize=(8,5))
+            sns.histplot(
+                data=train,
+                x='Age',
+                hue='Sex',
+                kde=True,
+                bins=25,
+                alpha=0.8,
+                multiple='layer',
+                palette=["#FF8345", "#08675B88"],  # jouw kleuren
+                ax=ax1
+            )
+            ax1.set_title('Leeftijdsverdeling per geslacht')
+            ax1.grid(axis='y', linestyle='--', alpha=0.7)
+            st.pyplot(fig1)
+        
+        # Rechter plot (voorbeeld: leeftijdsverdeling per overleving)
+        with col2:
+            fig2, ax2 = plt.subplots(figsize=(8,5))
+            sns.histplot(
+                data=train,
+                x='Age',
+                hue='Survived',
+                kde=True,
+                bins=25,
+                alpha=0.8,
+                multiple='layer',
+                palette=["#08675B88", "#FF8345"],  # omgekeerde kleuren voor contrast
+                ax=ax2
+            )
+            ax2.set_title('Leeftijdsverdeling per overleving')
+            ax2.grid(axis='y', linestyle='--', alpha=0.7)
+            st.pyplot(fig2)
+
 
     with tab5: 
         st.title('Invloedrijke factoren')
     
       
     
+
 
 
 
