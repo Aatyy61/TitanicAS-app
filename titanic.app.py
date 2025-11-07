@@ -243,8 +243,6 @@ elif pagina == 'De 2e klasse':
     
         # --- Plot tonen in Streamlit ---
         st.pyplot(g)
-                
-       train['Survived_label'] = train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'})
         
         # Filter NaN-waarden in de kolommen die je plot
         train_plot = train.dropna(subset=['Embarked', 'Pclass', 'Survived_label'])
@@ -347,6 +345,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
