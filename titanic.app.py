@@ -176,11 +176,7 @@ elif pagina == 'De 2e klasse':
         ax1.grid(axis='y', linestyle='--', alpha=0.7)
         st.pyplot(fig1)
         
-        # Eventueel wat uitleg onder de plot
-        st.caption("""
-        Vrouwen lijken gemiddeld iets jonger in de dataset, en de verdeling is breder bij mannen.
-        """)
-        
+
         # --- PLOT 2: Leeftijdsverdeling per overleving ---
         st.markdown("### Leeftijdsverdeling per overleving")
         
@@ -203,7 +199,6 @@ elif pagina == 'De 2e klasse':
         ax2.grid(axis='y', linestyle='--', alpha=0.7)
         st.pyplot(fig2)
 
-        st.markdown("### Overlevingspercentage per leeftijdsgroep en klasse")
 
         # Plot maken
         fig, ax = plt.subplots(figsize=(8,5))
@@ -216,6 +211,7 @@ elif pagina == 'De 2e klasse':
             ax=ax
         )
     
+    # plot catplot
         g = sns.catplot(
         x='Embarked',
         hue='Survived',
@@ -227,53 +223,10 @@ elif pagina == 'De 2e klasse':
         height=5,
         aspect=0.9
         )
-    
-        # Titels en labels
-        g.fig.suptitle('Aantal passagiers per haven, klasse en overleving', fontsize=14, y=1.03)
-        g.set_axis_labels("Inschepingshaven", "Aantal passagiers")
-    
-        # Voeg getallen toe op de balken
-        for ax in g.axes.flat:
-            for container in ax.containers:
-                ax.bar_label(container, fmt='%d', label_type='edge', fontsize=9, color='black', padding=2)
-    
-        # Rasters toevoegen voor leesbaarheid
-        for ax in g.axes.flat:
-            ax.grid(axis='y', linestyle='--', alpha=0.6)
-    
-        # --- Plot tonen in Streamlit ---
-        st.pyplot(g)
-        
-        # Filter NaN-waarden in de kolommen die je plot
-        train_plot = train.dropna(subset=['Embarked', 'Pclass', 'Survived_label'])
-        
-        # Catplot (countplot per Pclass)
-        g = sns.catplot(
-            x='Embarked',
-            hue='Survived_label',
-            kind='count',
-            col='Pclass',
-            data=train_plot,
-            palette=["#08675B", "#FF8345"]
-        )
-        
-        # Titels en labels
-        g.fig.subplots_adjust(top=0.85)
-        g.fig.suptitle('Aantal overlevenden per haven van inscheping en klasse', fontsize=16)
-        g.set_axis_labels("Haven van inscheping", "Aantal passagiers")
-        g._legend.set_title("Overleving")
-        
-        # Render in Streamlit
-        st.pyplot(g.fig)
 
     with tab5:
         st.title('Invloedrijke factoren')
-    
-        # Maak Survived_label aan en filter NaN
-        if 'Survived_label' not in train.columns:
-            train['Survived_label'] = train['Survived'].map({0:'Niet overleefd',1:'Overleefd'})
-        train_plot = train.dropna(subset=['Age_Group','Survived','Pclass','Embarked','Fare_per_person'])
-    
+
         # --- Barplot Overleving per Age_Group en Pclass ---
         fig1, ax1 = plt.subplots(figsize=(8,5))
         sns.barplot(
@@ -292,82 +245,24 @@ elif pagina == 'De 2e klasse':
         plt.tight_layout()
         st.pyplot(fig1)
     
-        # --- Catplot per Embarked en Pclass ---
+      # Maak catplot
         g = sns.catplot(
             x='Embarked',
-            hue='Survived_label',
+            hue='Survived',  # gebruik de originele kolom
             kind='count',
             col='Pclass',
             data=train_plot,
-            palette=["#08675B","#FF8345"],
+            palette=["#08675B", "#FF8345"],
             height=5,
             aspect=0.9
         )
+
+        # Pas legend labels aan
+        for ax in g.axes.flat:
+            handles, labels = ax.get_legend_handles_labels()
+            ax.legend(handles=handles, labels=["Niet overleefd","Overleefd"], title="Overleving")
+
+        # Layout en titel
         g.fig.subplots_adjust(top=0.85)
         g.fig.suptitle('Aantal overlevenden per haven van inscheping en klasse', fontsize=16)
         g.set_axis_labels("Haven van inscheping", "Aantal passagiers")
-        g._legend.set_title("Overleving")
-        st.pyplot(g.fig)
-    
-        # --- Heatmap correlatie numerieke waarden ---
-        train_num = train_plot[['Age','SibSp','Parch','Fare_per_person']]
-        fig2, ax2 = plt.subplots(figsize=(10,8))
-        sns.heatmap(train_num.corr(), annot=True, cmap='coolwarm', ax=ax2)
-        ax2.set_title("Correlatie matrix van numerieke waarden")
-        st.pyplot(fig2)
-    
-        # --- Scatterplot Age vs Fare ---
-        fig3, ax3 = plt.subplots(figsize=(8,5))
-        sns.scatterplot(
-            x='Age',
-            y='Fare',
-            hue='Survived_label',
-            data=train_plot,
-            palette=["#08675B","#FF8345"],
-            ax=ax3,
-            alpha=0.6
-        )
-        ax3.set_xlabel('Leeftijd')
-        ax3.set_ylabel('Ticketprijs (£)')
-        ax3.set_title('Relatie tussen leeftijd en ticketprijs')
-        ax3.grid(alpha=0.5, linestyle='--')
-        st.pyplot(fig3)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
