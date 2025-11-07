@@ -286,76 +286,53 @@ elif pagina == 'Nieuwe verkenning':
         st.pyplot(fig)
 
 elif pagina == 'Ons model':
-
-    train['Age'] = train['Age'].fillna(train.groupby('Sex')['Age'].transform('mean'))
-    test['Age'] = train['Age'].fillna(train.groupby('Sex')['Age'].transform('mean'))
-    # Filter: alleen kinderen in 3e klas
-    children_third_class = train[(train['Pclass'] == 3) & (train['Age_Group'] == 'Child')]
-    
-    # Berekeningen
-    total_fare = children_third_class['Fare_per_person'].sum()
-    average_fare = children_third_class['Fare_per_person'].mean()
-    count_children = len(children_third_class)
-    
-    children_third_class = train[(train['Age_Group'] == 'Child') & (train['Pclass'] == 3)]
-    children_third_class.head().round(2)
-    
-    
-    train["Travel_Alone"] = np.where((train["SibSp"] +train["Parch"]) == 0, "Alleen", "Samen")
-    
-    train['Embarked'] = train['Embarked'].replace({
-        'S': 'Southampton',
-        'C': 'Cherbourg',
-        'Q': 'Queenstown'
-    })
-    
-    # === 1. Drop overbodige kolommen ===
-    train = train.drop(columns=['Cabin', 'Name', 'Ticket'])
-    test = test.drop(columns=['Cabin', 'Name', 'Ticket'])
-    
-    # === 2. Maak 'Sex' numeriek ===
-    train["Sex"] = train["Sex"].map({"male": 0, "female": 1})
-    test["Sex"] = test["Sex"].map({"male": 0, "female": 1})
-    
-    # === 3. Nieuwe feature: reist alleen? ===
-    train["Travel_Alone"] = np.where((train["SibSp"] + train["Parch"]) == 0, 1, 0)
-    test["Travel_Alone"] = np.where((test["SibSp"] + test["Parch"]) == 0, 1, 0)
-    
-    # === 4. One-hot encoding voor Embarked ===
-    train = pd.get_dummies(train, columns=["Embarked"], drop_first=False)
-    test = pd.get_dummies(test, columns=["Embarked"], drop_first=False)
-    # --- Titel pagina ---
-    st.title("Logistic Regression Model - Titanic")
-    st.markdown("""
-    Op deze pagina laten we zien hoe we een **logistisch regressiemodel** hebben getraind om te voorspellen 
-    wie de Titanic-overleving heeft overleefd.  
-    We bekijken de dataset, trainen het model, evalueren de prestaties en tonen de belangrijkste features.
-    """)
-    
     # --- Data inladen ---
     train = pd.read_csv("train.csv")
     test = pd.read_csv("test.csv")
     
-    # Eventueel preprocessing (voorbeeld)
-    train = train.dropna(subset=["Age"])
-    features = [col for col in train.columns if col not in ["Survived", "PassengerId", "status", "Age_Group"]]
+    # --- Preprocessing ---
+    train['Age'] = train.groupby('Sex')['Age'].transform(lambda x: x.fillna(x.mean()))
+    test['Age'] = test.groupby('Sex')['Age'].transform(lambda x: x.fillna(x.mean()))
     
+    # Drop irrelevante kolommen
+    train = train.drop(columns=['Cabin', 'Name', 'Ticket'])
+    test = test.drop(columns=['Cabin', 'Name', 'Ticket'])
+    
+    # Sex numeriek
+    train['Sex'] = train['Sex'].map({'male':0,'female':1})
+    test['Sex'] = test['Sex'].map({'male':0,'female':1})
+    
+    # Travel_Alone feature
+    train['Travel_Alone'] = np.where((train['SibSp'] + train['Parch']) == 0, 1, 0)
+    test['Travel_Alone'] = np.where((test['SibSp'] + test['Parch']) == 0, 1, 0)
+    
+    # Embarked one-hot encoding
+    train = pd.get_dummies(train, columns=['Embarked'], drop_first=False)
+    test = pd.get_dummies(test, columns=['Embarked'], drop_first=False)
+    
+    # --- Streamlit UI ---
+    st.title("Logistic Regression Model - Titanic")
+    st.markdown("""
+    We trainen een **logistisch regressiemodel** om te voorspellen wie de Titanic heeft overleefd.  
+    Hier zie je dataset preprocessing, modeltraining, evaluatie en feature importance.
+    """)
+    
+    # Features en target
+    target = "Survived"
+    features = [col for col in train.columns if col != target and col != "PassengerId"]
     X = train[features]
-    y = train["Survived"]
+    y = train[target]
     
-    # --- Train/validation split ---
-    X_train, X_val, y_train, y_val = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
+    # Train/validation split
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
     
-    # --- Model trainen ---
+    # Model trainen
     model = LogisticRegression(max_iter=1000)
     model.fit(X_train, y_train)
     
     # --- Evaluatie ---
     y_pred = model.predict(X_val)
     acc = accuracy_score(y_val, y_pred)
-    
     st.subheader("Accuracy op validation set")
     st.success(f"{acc:.3f}")
     
@@ -372,10 +349,9 @@ elif pagina == 'Ons model':
     # Classification report
     st.subheader("Classification Report")
     report = classification_report(y_val, y_pred, output_dict=True)
-    report_df = pd.DataFrame(report).transpose()
-    st.dataframe(report_df)
+    st.dataframe(pd.DataFrame(report).transpose())
     
-    # Feature importance / coefficients
+    # Feature importance
     st.subheader("Feature importance (coefficients)")
     coef_df = pd.DataFrame({
         "Feature": features,
@@ -383,8 +359,7 @@ elif pagina == 'Ons model':
     }).sort_values(by="Coefficient", ascending=False)
     st.dataframe(coef_df)
     
-    # Visualiseer positief vs negatief effect
-    st.subheader("Coefficients Visualisatie")
+    # Visualisatie coefficients
     fig_coef, ax_coef = plt.subplots(figsize=(8,6))
     sns.barplot(x="Coefficient", y="Feature", data=coef_df, palette="viridis", ax=ax_coef)
     ax_coef.set_title("Feature impact op overleving")
@@ -393,14 +368,12 @@ elif pagina == 'Ons model':
     # --- Voorspelling testset ---
     X_test = test[features]
     test_pred = model.predict(X_test)
-    
     submission = pd.DataFrame({
         "PassengerId": test["PassengerId"],
         "Survived": test_pred.astype(int)
     })
     
     st.subheader("Download voorspellingen")
-    st.markdown("Download de voorspellingen als CSV-bestand:")
     st.download_button(
         label="Download submission.csv",
         data=submission.to_csv(index=False).encode('utf-8'),
@@ -408,6 +381,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
