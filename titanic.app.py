@@ -3,9 +3,13 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+    
 
 
-pagina = st.sidebar.radio("Ga naar:", ["Introductie", "De 3e klasse", 'De 2e klasse', "De 1e klasse"])
+pagina = st.sidebar.radio("Ga naar:", ["Introductie", "Oude case", 'Nieuwe verkenning', "Ons model"])
 if pagina == 'Introductie':
     st.title("Visual Analytics Dashboard") 
     st.subheader("Een interactieve data-analyse presentatie") 
@@ -28,7 +32,7 @@ if pagina == 'Introductie':
     st.info("Scroll naar beneden of gebruik het menu om verder te gaan.")
 
 # pagina 2:
-elif pagina == 'De 3e klasse':
+elif pagina == 'Oude case':
     # Data inladen (zonder te tonen)
     train = pd.read_csv('train.csv')
     test = pd.read_csv('test.csv')
@@ -79,7 +83,7 @@ elif pagina == 'De 3e klasse':
         st.pyplot(fig3)
 
 
-elif pagina == 'De 2e klasse':
+elif pagina == 'Nieuwe verkenning':
     train = pd.read_csv("train.csv")
     test = pd.read_csv("test.csv")
     train['Age'] = train['Age'].fillna(train.groupby('Sex')['Age'].transform('mean'))
@@ -224,32 +228,6 @@ elif pagina == 'De 2e klasse':
         aspect=0.9
         )
 
-        # Plot maken
-    fig, ax = plt.subplots(figsize=(7,5))
-    sns.countplot(
-        data=train,
-        x='FamilySize',
-        palette=["#08675B", "#FF8345"],
-        ax=ax
-    )
-
-    # Titel en labels
-    ax.set_title('Verdeling van familiegrootte')
-    ax.set_xlabel('Aantal familieleden aan boord')
-    ax.set_ylabel('Aantal passagiers')
-
-    # Voeg labels toe boven de balken
-    for container in ax.containers:
-        ax.bar_label(container, fmt='%d', label_type='edge', padding=3, fontsize=10)
-
-    # Rasterlijnen voor duidelijkheid
-    ax.grid(axis='y', linestyle='--', alpha=0.5)
-
-    plt.tight_layout()
-
-    # Toon plot in Streamlit
-    st.pyplot(fig)
-
     with tab5:
         st.title('Invloedrijke factoren')
 
@@ -306,7 +284,94 @@ elif pagina == 'De 2e klasse':
         
         # --- Render in Streamlit ---
         st.pyplot(fig)
+
+elif pahina == 'Ons model':
+
+    # --- Titel pagina ---
+    st.title("Logistic Regression Model - Titanic")
+    st.markdown("""
+    Op deze pagina laten we zien hoe we een **logistisch regressiemodel** hebben getraind om te voorspellen 
+    wie de Titanic-overleving heeft overleefd.  
+    We bekijken de dataset, trainen het model, evalueren de prestaties en tonen de belangrijkste features.
+    """)
     
+    # --- Data inladen ---
+    train = pd.read_csv("train.csv")
+    test = pd.read_csv("test.csv")
+    
+    # Eventueel preprocessing (voorbeeld)
+    train = train.dropna(subset=["Age"])
+    features = [col for col in train.columns if col not in ["Survived", "PassengerId", "status", "Age_Group"]]
+    
+    X = train[features]
+    y = train["Survived"]
+    
+    # --- Train/validation split ---
+    X_train, X_val, y_train, y_val = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    
+    # --- Model trainen ---
+    model = LogisticRegression(max_iter=1000)
+    model.fit(X_train, y_train)
+    
+    # --- Evaluatie ---
+    y_pred = model.predict(X_val)
+    acc = accuracy_score(y_val, y_pred)
+    
+    st.subheader("Accuracy op validation set")
+    st.success(f"{acc:.3f}")
+    
+    # Confusion matrix
+    st.subheader("Confusion Matrix")
+    cm = confusion_matrix(y_val, y_pred)
+    fig_cm, ax_cm = plt.subplots()
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax_cm)
+    ax_cm.set_xlabel("Predicted")
+    ax_cm.set_ylabel("Actual")
+    ax_cm.set_title("Confusion Matrix")
+    st.pyplot(fig_cm)
+    
+    # Classification report
+    st.subheader("Classification Report")
+    report = classification_report(y_val, y_pred, output_dict=True)
+    report_df = pd.DataFrame(report).transpose()
+    st.dataframe(report_df)
+    
+    # Feature importance / coefficients
+    st.subheader("Feature importance (coefficients)")
+    coef_df = pd.DataFrame({
+        "Feature": features,
+        "Coefficient": model.coef_[0]
+    }).sort_values(by="Coefficient", ascending=False)
+    st.dataframe(coef_df)
+    
+    # Visualiseer positief vs negatief effect
+    st.subheader("Coefficients Visualisatie")
+    fig_coef, ax_coef = plt.subplots(figsize=(8,6))
+    sns.barplot(x="Coefficient", y="Feature", data=coef_df, palette="viridis", ax=ax_coef)
+    ax_coef.set_title("Feature impact op overleving")
+    st.pyplot(fig_coef)
+    
+    # --- Voorspelling testset ---
+    X_test = test[features]
+    test_pred = model.predict(X_test)
+    
+    submission = pd.DataFrame({
+        "PassengerId": test["PassengerId"],
+        "Survived": test_pred.astype(int)
+    })
+    
+    st.subheader("Download voorspellingen")
+    st.markdown("Download de voorspellingen als CSV-bestand:")
+    st.download_button(
+        label="Download submission.csv",
+        data=submission.to_csv(index=False).encode('utf-8'),
+        file_name="submission.csv",
+        mime="text/csv"
+    )
+    
+
 
 
 
