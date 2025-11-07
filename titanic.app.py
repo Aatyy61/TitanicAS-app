@@ -244,6 +244,7 @@ elif pagina == 'De 2e klasse':
         # --- Plot tonen in Streamlit ---
         st.pyplot(g)
 
+        
          # Plot maken
         fig, ax = plt.subplots(figsize=(7,5))
         sns.countplot(
@@ -272,6 +273,7 @@ elif pagina == 'De 2e klasse':
             ax.bar_label(container, fmt='%d', label_type='edge', padding=2)
     
         plt.tight_layout()
+
 
     with tab5:
         # Labels en layout
@@ -353,6 +355,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
