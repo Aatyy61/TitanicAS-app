@@ -335,22 +335,7 @@ elif pagina == 'Ons model':
     acc = accuracy_score(y_val, y_pred)
     st.subheader("Accuracy op validation set")
     st.success(f"{acc:.3f}")
-    
-    # Confusion matrix
-    st.subheader("Confusion Matrix")
-    cm = confusion_matrix(y_val, y_pred)
-    fig_cm, ax_cm = plt.subplots()
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax_cm)
-    ax_cm.set_xlabel("Predicted")
-    ax_cm.set_ylabel("Actual")
-    ax_cm.set_title("Confusion Matrix")
-    st.pyplot(fig_cm)
-    
-    # Classification report
-    st.subheader("Classification Report")
-    report = classification_report(y_val, y_pred, output_dict=True)
-    st.dataframe(pd.DataFrame(report).transpose())
-    
+        
     # Feature importance
     st.subheader("Feature importance (coefficients)")
     coef_df = pd.DataFrame({
@@ -381,6 +366,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
