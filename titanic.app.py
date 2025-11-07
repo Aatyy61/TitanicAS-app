@@ -9,14 +9,10 @@ from sklearn.metrics import accuracy_score, confusion_matrix, classification_rep
     
 
 
-pagina = st.sidebar.radio("Ga naar:", ["Introductie", "Oude case", 'Nieuwe verkenning', "Ons model"])
-if pagina == 'Introductie':
-
-     # Footer of extra tekst
-    st.info("Scroll naar beneden of gebruik het menu om verder te gaan.")
+pagina = st.sidebar.radio("Ga naar:", ["Oude case", 'Nieuwe verkenning', "Ons model"])
 
 # pagina 2:
-elif pagina == 'Oude case':
+if pagina == 'Oude case':
     # Data inladen (zonder te tonen)
     train = pd.read_csv('train.csv')
     test = pd.read_csv('test.csv')
@@ -374,6 +370,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
