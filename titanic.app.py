@@ -249,11 +249,40 @@ elif pagina == 'De 2e klasse':
         
         st.pyplot(fig)
 
+        g = sns.catplot(
+        x='Embarked',
+        hue='Survived',
+        col='Pclass',
+        kind='count',
+        data=train,
+        palette=["#08675B88", "#FF8345"],  # jouw kleuren
+        hue_order=[1, 0],                  # zodat oranje (Nee) bovenop ligt
+        height=5,
+        aspect=0.9
+        )
+    
+        # Titels en labels
+        g.fig.suptitle('Aantal passagiers per haven, klasse en overleving', fontsize=14, y=1.03)
+        g.set_axis_labels("Inschepingshaven", "Aantal passagiers")
+    
+        # Voeg getallen toe op de balken
+        for ax in g.axes.flat:
+            for container in ax.containers:
+                ax.bar_label(container, fmt='%d', label_type='edge', fontsize=9, color='black', padding=2)
+    
+        # Rasters toevoegen voor leesbaarheid
+        for ax in g.axes.flat:
+            ax.grid(axis='y', linestyle='--', alpha=0.6)
+    
+        # --- Plot tonen in Streamlit ---
+        st.pyplot(g)
+
     with tab5: 
         st.title('Invloedrijke factoren')
     
       
     
+
 
 
 
