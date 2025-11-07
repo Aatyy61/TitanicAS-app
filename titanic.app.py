@@ -278,6 +278,7 @@ elif pagina == 'De 2e klasse':
         st.pyplot(g)
 
     with tab5: 
+        train_num = train[['Age', 'SibSp', 'Parch', 'Fare_per_person']]
         st.title('Invloedrijke factoren')
         
         fig, ax = plt.subplots(figsize=(10,8))
@@ -289,6 +290,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
