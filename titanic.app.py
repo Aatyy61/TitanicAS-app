@@ -309,7 +309,14 @@ elif pagina == 'Ons model':
     # Embarked one-hot encoding
     train = pd.get_dummies(train, columns=['Embarked'], drop_first=False)
     test = pd.get_dummies(test, columns=['Embarked'], drop_first=False)
-    
+
+    # Alle kolommen van train aan test toevoegen (die ontbreken) met 0
+    for col in features:
+        if col not in test.columns:
+            test[col] = 0
+
+# Sorteer kolommen zodat de volgorde exact overeenkomt
+X_test = test[features]
     # --- Streamlit UI ---
     st.title("Logistic Regression Model - Titanic")
     st.markdown("""
@@ -366,6 +373,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
