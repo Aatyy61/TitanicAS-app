@@ -230,7 +230,7 @@ elif pagina == 'De 2e klasse':
         # --- Barplot Overleving per Age_Group en Pclass ---
         fig1, ax1 = plt.subplots(figsize=(8,5))
         sns.barplot(
-            data=train_plot,
+            data=train,
             x='Age_Group',
             y='Survived',
             hue='Pclass',
@@ -251,7 +251,7 @@ elif pagina == 'De 2e klasse':
             hue='Survived',  # gebruik de originele kolom
             kind='count',
             col='Pclass',
-            data=train_plot,
+            data=train,
             palette=["#08675B", "#FF8345"],
             height=5,
             aspect=0.9
@@ -266,3 +266,4 @@ elif pagina == 'De 2e klasse':
         g.fig.subplots_adjust(top=0.85)
         g.fig.suptitle('Aantal overlevenden per haven van inscheping en klasse', fontsize=16)
         g.set_axis_labels("Haven van inscheping", "Aantal passagiers")
+
