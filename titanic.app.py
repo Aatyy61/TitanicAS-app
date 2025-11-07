@@ -169,7 +169,7 @@ elif pagina == 'De 2e klasse':
             kde=True,
             bins=25,
             alpha=0.8,
-            multiple='layer',
+            multiple='dodge',
             palette=["#FF8345", "#08675B88"],
             ax=ax1
         )
@@ -195,7 +195,7 @@ elif pagina == 'De 2e klasse':
             kde=True,
             bins=25,
             alpha=0.8,
-            multiple='layer',
+            multiple='dodge',
             palette=["#08675B88", "#FF8345"],  # kleuren omgedraaid voor contrast
             ax=ax2
         )
@@ -212,6 +212,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
