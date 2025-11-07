@@ -193,8 +193,6 @@ elif pagina == 'De 2e klasse':
         st.pyplot(fig2)
     
         # --- Barplot overleving per leeftijdsgroep en klasse ---
-        grouped = train.groupby(['Age_Group','Pclass'], as_index=False)['Survived'].mean()
-        grouped['Survived'] *= 100
         fig3, ax3 = plt.subplots(figsize=(8,5))
         sns.barplot(
             data=grouped,
@@ -202,14 +200,15 @@ elif pagina == 'De 2e klasse':
             y='Survived',
             hue='Pclass',
             palette=["#08675B","#E3DF00","#FF8345"],
-            ax=ax3
+            ax=ax3       # ← gebruik ax3, niet ax
         )
         ax3.set_title('Overlevingspercentage per leeftijdsgroep en klasse')
         ax3.set_xlabel('Leeftijdsgroep')
         ax3.set_ylabel('Overlevingskans (%)')
         ax3.grid(axis='y', linestyle='--', alpha=0.3)
+        
         st.pyplot(fig3)
-    
+        
         # --- Catplot per haven van inscheping ---
         train_plot = train.dropna(subset=['Embarked','Pclass','Survived_label'])
         g = sns.catplot(
@@ -308,6 +307,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
