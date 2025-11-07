@@ -238,7 +238,7 @@ elif pagina == 'De 2e klasse':
             x='Age',
             y='Fare',
             data=train,
-            hue='Survived',
+            hue=train['Survived'].map({0: 'Niet overleefd', 1: 'Overleefd'}),
             palette=["#08675B88", "#FF8345"],
             ax=ax
         )
@@ -254,6 +254,7 @@ elif pagina == 'De 2e klasse':
     
       
     
+
 
 
 
