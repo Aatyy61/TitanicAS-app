@@ -227,12 +227,34 @@ elif pagina == 'De 2e klasse':
         # Streamlit render
         st.pyplot(fig)
 
+        st.header("Relatie tussen leeftijd en ticketprijs (3e klasse)")
+        
+        # Filter enkel passagiers van de 3e klasse
+        derde_klasse = train[train["Pclass"] == 3]
+    
+        # Plot maken
+        fig, ax = plt.subplots()
+        sns.scatterplot(
+            x='Age',
+            y='Fare',
+            data=derde_klasse,
+            hue='Survived',
+            palette=["#08675B88", "#FF8345"],
+            ax=ax
+        )
+        ax.set_xlabel('Leeftijd')
+        ax.set_ylabel('Ticketprijs (£)')
+        ax.set_title('Relatie tussen leeftijd en ticketprijs (3e klasse)')
+        ax.grid(alpha=0.5, linestyle='--')
+        
+        st.pyplot(fig)
 
     with tab5: 
         st.title('Invloedrijke factoren')
     
       
     
+
 
 
 
