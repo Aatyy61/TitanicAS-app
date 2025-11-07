@@ -286,11 +286,18 @@ elif pagina == 'Nieuwe verkenning':
         st.pyplot(fig)
 
 elif pagina == 'Ons model':
+    st.title("Logistic Regression Model - Titanic")
+    st.markdown("""
+    We trainen een **logistisch regressiemodel** om te voorspellen wie de Titanic heeft overleefd.  
+    Hier zie je dataset preprocessing, modeltraining, evaluatie en feature importance.
+    """)
+    
     # --- Data inladen ---
     train = pd.read_csv("train.csv")
     test = pd.read_csv("test.csv")
     
     # --- Preprocessing ---
+    # Leeftijd invullen met gemiddelde per geslacht
     train['Age'] = train.groupby('Sex')['Age'].transform(lambda x: x.fillna(x.mean()))
     test['Age'] = test.groupby('Sex')['Age'].transform(lambda x: x.fillna(x.mean()))
     
@@ -309,26 +316,27 @@ elif pagina == 'Ons model':
     # Embarked one-hot encoding
     train = pd.get_dummies(train, columns=['Embarked'], drop_first=False)
     test = pd.get_dummies(test, columns=['Embarked'], drop_first=False)
-
-    # Sorteer kolommen zodat de volgorde exact overeenkomt
-    X_test = test[features]
-    # --- Streamlit UI ---
-    st.title("Logistic Regression Model - Titanic")
-    st.markdown("""
-    We trainen een **logistisch regressiemodel** om te voorspellen wie de Titanic heeft overleefd.  
-    Hier zie je dataset preprocessing, modeltraining, evaluatie en feature importance.
-    """)
     
-    # Features en target
+    # --- Features en target ---
     target = "Survived"
     features = [col for col in train.columns if col != target and col != "PassengerId"]
+    
+    # Zorg dat test exact dezelfde kolommen heeft
+    for col in features:
+        if col not in test.columns:
+            test[col] = 0
+    # Sorteer kolommen in dezelfde volgorde
+    X_test = test[features]
+    
     X = train[features]
     y = train[target]
     
-    # Train/validation split
-    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.2, random_state=42)
+    # --- Train/validation split ---
+    X_train, X_val, y_train, y_val = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
     
-    # Model trainen
+    # --- Model trainen ---
     model = LogisticRegression(max_iter=1000)
     model.fit(X_train, y_train)
     
@@ -337,8 +345,24 @@ elif pagina == 'Ons model':
     acc = accuracy_score(y_val, y_pred)
     st.subheader("Accuracy op validation set")
     st.success(f"{acc:.3f}")
-        
-    # Feature importance
+    
+    # Confusion matrix
+    st.subheader("Confusion Matrix")
+    cm = confusion_matrix(y_val, y_pred)
+    fig_cm, ax_cm = plt.subplots(figsize=(6,5))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', ax=ax_cm)
+    ax_cm.set_xlabel("Predicted")
+    ax_cm.set_ylabel("Actual")
+    ax_cm.set_title("Confusion Matrix")
+    st.pyplot(fig_cm)
+    
+    # Classification report
+    st.subheader("Classification Report")
+    report = classification_report(y_val, y_pred, output_dict=True)
+    report_df = pd.DataFrame(report).transpose()
+    st.dataframe(report_df)
+    
+    # Feature importance / coefficients
     st.subheader("Feature importance (coefficients)")
     coef_df = pd.DataFrame({
         "Feature": features,
@@ -346,14 +370,14 @@ elif pagina == 'Ons model':
     }).sort_values(by="Coefficient", ascending=False)
     st.dataframe(coef_df)
     
-    # Visualisatie coefficients
+    # Visualisatie van positief vs negatief effect
+    st.subheader("Coefficients Visualisatie")
     fig_coef, ax_coef = plt.subplots(figsize=(8,6))
     sns.barplot(x="Coefficient", y="Feature", data=coef_df, palette="viridis", ax=ax_coef)
     ax_coef.set_title("Feature impact op overleving")
     st.pyplot(fig_coef)
     
     # --- Voorspelling testset ---
-    X_test = test[features]
     test_pred = model.predict(X_test)
     submission = pd.DataFrame({
         "PassengerId": test["PassengerId"],
@@ -361,6 +385,7 @@ elif pagina == 'Ons model':
     })
     
     st.subheader("Download voorspellingen")
+    st.markdown("Download de voorspellingen als CSV-bestand:")
     st.download_button(
         label="Download submission.csv",
         data=submission.to_csv(index=False).encode('utf-8'),
@@ -368,6 +393,7 @@ elif pagina == 'Ons model':
         mime="text/csv"
     )
     
+
 
 
 
